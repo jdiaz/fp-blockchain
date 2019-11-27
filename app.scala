@@ -7,7 +7,7 @@ case class Block(
   index: BigInt,
   hash: String,
   prevHash: String,
-  timestamp: Long,
+  unixtime: Long,
   data: String
 )
 
@@ -19,59 +19,58 @@ object Blockchain {
     case _ => None
   }
 
-  def isValidNewBlock(prev: Block, newBlock: Block): Boolean = { 
-    if (newBlock.index != prev.index + 1)
-      return false
-    if (calculateHashForBlock(newBlock) != newBlock.hash)
-      return false
-    if (newBlock.prevHash != prev.hash)
-      return false
-    true
+  def isValidNewBlock(prev: Block, newBlock: Block): Boolean = newBlock match {
+    case b if (b.index != prev.index + 1) => false
+    case b if (calculateHashForBlock(b) != b.hash) => false
+    case b if (b.prevHash != prev.hash) => false
+    case _ => true
   }
-
-  def addBlock(b: Block, chain: List[Block]): List[Block] = {
-    val last = getLastBlock(chain)
-    if (last.isEmpty || chain.isEmpty)
-      return List(b)
-    if (!isValidNewBlock(last.get, b)) {
-      return chain
+  
+  def addBlock(b: Block, chain: List[Block]): List[Block] = 
+    getLastBlock(chain) match {
+      case None => List(b)
+      case Some(x) if (!isValidNewBlock(x, b)) => chain
+      case _ => chain ::: List(b)
     }
-
-    chain ::: List(b)
-  }
-
+  
   def calculateHashForBlock(block: Block): String = 
-    computeHash(block.index, block.prevHash, block.timestamp, block.data)
+    computeHash(block.index, block.prevHash, block.unixtime, block.data)
 
-  def computeHash(index: BigInt, hash: String, timestamp: Long, data: String): String = {
+  def computeHash(
+    index: BigInt,
+    hash: String,
+    unixtime: Long,
+    data: String
+  ): String = {
     val md = MessageDigest.getInstance("SHA-256")
     val hexes = md.digest(
-      (index + hash + timestamp + data).getBytes()
+      (index + hash + unixtime + data).getBytes()
     )
     Base64.getEncoder().encodeToString(hexes)
   }
-
 
   def genesisBlock(): Block = new Block(
     0,
     "816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7",
     null,
-    new Date().getTime() / 1000,
+    getUnixTime(),
     "Genesis Block"
   )
+
+  def getUnixTime(): Long = new Date().getTime() / 1000
 
   def computeNextBlock(blockData: String, chain: List[Block]): Block = {
     val lastBlock = getLastBlock(chain).getOrElse(genesisBlock())
     val nextIndex = lastBlock.index + 1
-    val nextTimestamp = new Date().getTime() / 1000
-    val nextHash = computeHash(nextIndex, lastBlock.hash, nextTimestamp, blockData)
-    new Block(nextIndex, nextHash, lastBlock.hash, nextTimestamp, blockData)
+    val nextunixtime = getUnixTime()
+    val nextHash = computeHash(nextIndex, lastBlock.hash, nextunixtime, blockData)
+    new Block(nextIndex, nextHash, lastBlock.hash, nextunixtime, blockData)
   }
 
   def example(): List[Block] = {
     val chain1 = List(genesisBlock())
-    val sec = computeNextBlock("Bob", chain1)
-    addBlock(sec, chain1)
+    val block2 = computeNextBlock("Bob", chain1)
+    addBlock(block2, chain1)
   }
 
 }
@@ -88,7 +87,7 @@ s"""   {
    "index": "${h.index}",
    "hash": "${h.hash}",
    "previousHash": "${h.prevHash}",
-   "timestamp": "${h.timestamp}",
+   "unixtime": "${h.unixtime}",
    "data": "${h.data}"
     }
 ]""")
@@ -97,7 +96,7 @@ s"""   {
     "index": "${h.index}",
     "hash": "${h.hash}",
     "previousHash": "${h.prevHash}",
-    "timestamp": "${h.timestamp}",
+    "unixtime": "${h.unixtime}",
     "data": "${h.data}"
      },
 """)
