@@ -62,15 +62,25 @@ object Blockchain {
   def computeNextBlock(blockData: String, chain: List[Block]): Block = {
     val lastBlock = getLastBlock(chain).getOrElse(genesisBlock())
     val nextIndex = lastBlock.index + 1
-    val nextunixtime = getUnixTime()
-    val nextHash = computeHash(nextIndex, lastBlock.hash, nextunixtime, blockData)
-    new Block(nextIndex, nextHash, lastBlock.hash, nextunixtime, blockData)
+    val nextUnixtime = getUnixTime()
+    val nextHash = computeHash(nextIndex, lastBlock.hash, nextUnixtime, blockData)
+    new Block(nextIndex, nextHash, lastBlock.hash, nextUnixtime, blockData)
   }
 
-  def example(): List[Block] = {
-    val chain1 = List(genesisBlock())
-    val block2 = computeNextBlock("Bob", chain1)
-    addBlock(block2, chain1)
+  def example(n: Int = 1): List[Block] = {
+
+    val genesisChain = List(genesisBlock())
+
+    def loop(n: Int, chain: List[Block]): List[Block] = n match {
+      case i if (i > 0) => {
+        val nblock = computeNextBlock(s"Block${chain.length}", chain)
+        val nchain = addBlock(nblock, chain)
+        loop(i - 1, nchain)
+      }
+      case _ => chain 
+    }
+
+    loop(n, genesisChain)
   }
 
 }
@@ -80,9 +90,9 @@ object chainp {
     println(fromBlockchainToJSON(l))
 
   def fromBlockchainToJSON(chain: List[Block]): String = {
-    def loop(l: List[Block], acc: String): String = 
+    def loop(l: List[Block], acc: StringBuilder): String = 
       l match {
-        case h :: Nil => loop(List(), acc + 
+        case h :: Nil => loop(List(), acc.append( 
 s"""   {
    "index": "${h.index}",
    "hash": "${h.hash}",
@@ -90,8 +100,8 @@ s"""   {
    "unixtime": "${h.unixtime}",
    "data": "${h.data}"
     }
-]""")
-        case h :: tail => loop(tail, acc + 
+]"""))
+        case h :: tail => loop(tail, acc.append(
 s"""   {
     "index": "${h.index}",
     "hash": "${h.hash}",
@@ -99,9 +109,9 @@ s"""   {
     "unixtime": "${h.unixtime}",
     "data": "${h.data}"
      },
-""")
-        case _ => acc
+"""))
+        case _ => acc.toString()
       }
-      loop(chain, "[\n")
+      loop(chain, new StringBuilder("[\n"))
     }
 }
