@@ -68,9 +68,9 @@ object Blockchain {
   }
 
   def example(n: Int = 1): List[Block] = {
-
+    
     val genesisChain = List(genesisBlock())
-
+    
     def loop(n: Int, chain: List[Block]): List[Block] = n match {
       case i if (i > 0) => {
         val nblock = computeNextBlock(s"Block${chain.length}", chain)
@@ -79,7 +79,6 @@ object Blockchain {
       }
       case _ => chain 
     }
-
     loop(n, genesisChain)
   }
 
