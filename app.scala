@@ -1,6 +1,7 @@
 
 import java.security.MessageDigest
 import java.util.Date
+import java.util.Base64
 
 case class Block(
   index: BigInt,
@@ -30,13 +31,12 @@ object Blockchain {
 
   def addBlock(b: Block, chain: List[Block]): List[Block] = {
     val last = getLastBlock(chain)
-    if (
-      !last.isEmpty && !isValidNewBlock(last.get, b)
-    ) {
+    if (last.isEmpty || chain.isEmpty)
+      return List(b)
+    if (!isValidNewBlock(last.get, b)) {
+      println(s"This case last.isEmpty=${last.isEmpty} last.get=${last.get} !isValidNewBlock(last.get, b)=${!isValidNewBlock(last.get, b)}" )
       return chain
     }
-    if (last.isEmpty && chain.isEmpty)
-      return List(b)
 
     chain ::: List(b)
   }
@@ -46,7 +46,10 @@ object Blockchain {
 
   def computeHash(index: BigInt, hash: String, timestamp: Long, data: String): String = {
     val md = MessageDigest.getInstance("SHA-256")
-    md.digest((index + hash + timestamp + data).getBytes()).toString()
+    val hexes = md.digest(
+      (index + hash + timestamp + data).getBytes()
+    )
+    Base64.getEncoder().encodeToString(hexes)
   }
 
 
@@ -69,7 +72,6 @@ object Blockchain {
   def example(): List[Block] = {
     val chain1 = List(genesisBlock())
     val sec = computeNextBlock("Bob", chain1)
-    println(sec)
     addBlock(sec, chain1)
   }
 
