@@ -34,7 +34,6 @@ object Blockchain {
     if (last.isEmpty || chain.isEmpty)
       return List(b)
     if (!isValidNewBlock(last.get, b)) {
-      println(s"This case last.isEmpty=${last.isEmpty} last.get=${last.get} !isValidNewBlock(last.get, b)=${!isValidNewBlock(last.get, b)}" )
       return chain
     }
 
