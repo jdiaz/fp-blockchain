@@ -30,14 +30,14 @@ scala> printc(chain)
     "index": "0",
     "hash": "816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7",
     "previousHash": "null",
-    "unixtime": "1575050168",
+    "unixtime": 1575050168,
     "data": "Genesis Block"
      },
    {
     "index": "1",
     "hash": "lsBWjg0lYgUO6SquwYHVPjicjB3QWte2exjRraNsdw8=",
     "previousHash": "816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7",
-    "unixtime": "1575050168",
+    "unixtime": 1575050168,
     "data": "Block1"
      },
    {

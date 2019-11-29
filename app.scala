@@ -96,7 +96,7 @@ s"""   {
    "index": "${h.index}",
    "hash": "${h.hash}",
    "previousHash": "${h.prevHash}",
-   "unixtime": "${h.unixtime}",
+   "unixtime": ${h.unixtime},
    "data": "${h.data}"
     }
 ]"""))
@@ -105,7 +105,7 @@ s"""   {
     "index": "${h.index}",
     "hash": "${h.hash}",
     "previousHash": "${h.prevHash}",
-    "unixtime": "${h.unixtime}",
+    "unixtime": ${h.unixtime},
     "data": "${h.data}"
      },
 """))
