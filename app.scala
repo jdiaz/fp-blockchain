@@ -19,7 +19,7 @@ object Blockchain {
     case _ => None
   }
 
-  def isValidNewBlock(prev: Block, newBlock: Block): Boolean = newBlock match {
+  def isValidNewBlock(prev: Block, nblock: Block): Boolean = nblock match {
     case b if (b.index != prev.index + 1) => false
     case b if (calculateHashForBlock(b) != b.hash) => false
     case b if (b.prevHash != prev.hash) => false
@@ -49,14 +49,6 @@ object Blockchain {
     Base64.getEncoder().encodeToString(hexes)
   }
 
-  def genesisBlock(): Block = new Block(
-    0,
-    "816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7",
-    null,
-    getUnixTime(),
-    "Genesis Block"
-  )
-
   def getUnixTime(): Long = new Date().getTime() / 1000
 
   def computeNextBlock(blockData: String, chain: List[Block]): Block = {
@@ -82,9 +74,17 @@ object Blockchain {
     loop(n, genesisChain)
   }
 
+  def genesisBlock(): Block = new Block(
+    0,
+    "816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7",
+    null,
+    getUnixTime(),
+    "Genesis Block"
+  )
+
 }
 
-object chainp {
+object printc {
   def apply(l: List[Block]): Unit = 
     println(fromBlockchainToJSON(l))
 
