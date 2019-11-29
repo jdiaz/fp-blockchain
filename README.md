@@ -44,7 +44,7 @@ scala> printc(chain)
    "index": "2",
    "hash": "go5Q49jCeyYz0UTHkjshpUEcIF4yfrObKsZe8yBj670=",
    "previousHash": "lsBWjg0lYgUO6SquwYHVPjicjB3QWte2exjRraNsdw8=",
-   "unixtime": "1575050168",
+   "unixtime": 1575050168,
    "data": "Block2"
     }
 ]
